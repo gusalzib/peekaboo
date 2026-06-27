@@ -1,0 +1,29 @@
+#this ci.yml file was made thanks to a CI/CD pipeline workshop put together by Nasit Vurgun
+
+image: ubuntu:latest
+
+before_script:
+  - chmod +x setup-build-env.sh
+  - ./setup-build-env.sh
+
+stages:
+  - build
+ # - deploy # at this point only build will be implemented in this file/project. deploy may be looked at later.
+
+compile:
+  stage: build
+  tags:
+    - docker
+  script:
+    - export PATH=$PATH:/root/bin             # set the path to arduino-cli installation folder
+    - pwd                                     # print the current working directory
+    - cd wio-code/wio-main/                   # change the directory to arduino folder
+    - arduino-cli lib list                    # check that libraries are installed
+
+    # Compile
+    - arduino-cli compile --fqbn Seeeduino:samd:seeed_wio_terminal
+
+    # Upload
+    - arduino-cli board list                  # Check if device is connected
+  except:
+    - tags
